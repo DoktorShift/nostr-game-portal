@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +10,7 @@ import FloatingActionMenu from '@/components/FloatingActionMenu';
 import { Profile } from '@/components/Profile';
 import { EnhancedFriendsSection } from '@/components/EnhancedFriendsSection';
 import { PlayersOnlineSection } from '@/components/PlayersOnlineSection';
+import { useNavigate } from 'react-router-dom';
 
 interface GameHubProps {
   onLogout: () => void;
@@ -18,6 +18,14 @@ interface GameHubProps {
 }
 
 const games = [
+  {
+    id: 'nostr-tictactoe',
+    name: "Nostr Tic-Tac-Toe",
+    preview: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=200&fit=crop",
+    maxPlayers: 2,
+    comingSoon: false,
+    description: "Play Tic-Tac-Toe with friends using Nostr"
+  },
   {
     id: 1,
     name: "Lightning Strike",
@@ -50,13 +58,18 @@ const games = [
 
 export function GameHub({ onLogout, onNavigateToProfile }: GameHubProps) {
   const [activeTab, setActiveTab] = useState<'games' | 'leaderboard' | 'friends'>('games');
+  const navigate = useNavigate();
   
   // Get user pubkey from localStorage or context
   const userPubkey = localStorage.getItem('userPubkey') || '';
 
-  const handlePlayGame = (gameId: number) => {
-    console.log(`Playing game ${gameId}`);
-    // Game logic will be implemented later
+  const handlePlayGame = (gameId: string | number) => {
+    if (typeof gameId === 'string') {
+      navigate(`/games/${gameId}`);
+    } else {
+      console.log(`Playing game ${gameId}`);
+      // Game logic will be implemented later
+    }
   };
 
   const renderGames = () => (
