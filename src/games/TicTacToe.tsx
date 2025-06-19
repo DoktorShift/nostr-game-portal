@@ -374,9 +374,27 @@ const TicTacToe = ({ onScoreUpdate, onGameOver }) => {
   }, [gameId, relayUrl, loginMethod, nsec, showToast, connectToRelay, publishGameState]);
 
   // Game Logic Functions
-  const startGameRound = useCallback(() => {
+  const startGameRound = useCallback(async () => {
     if (!isRoomCreator || connectedPlayers < 2) return;
     
+    console.log('Starting game round - setting gameReady to true');
+    
+    // Create the new game state with gameReady: true
+    const newGameState = {
+      board: Array(9).fill(null),
+      currentPlayer: 'X',
+      winner: null,
+      winningCells: [],
+      version: gameStateVersion + 1,
+      xWins: xWins,
+      oWins: oWins,
+      playerX: playerX,
+      playerO: playerO,
+      gameReady: true, // This is the key change
+      creatorPubkey: creatorPubkey
+    };
+    
+    // Update local state first
     setGameReady(true);
     setBoard(Array(9).fill(null));
     setCurrentPlayer('X');
@@ -384,9 +402,17 @@ const TicTacToe = ({ onScoreUpdate, onGameOver }) => {
     setWinningCells([]);
     setIsMyTurn(mySymbol === 'X');
     setGameStateVersion(prev => prev + 1);
-    publishGameState();
-    showToast('Game started!', 'success');
-  }, [isRoomCreator, connectedPlayers, mySymbol, publishGameState, showToast]);
+    
+    // Publish the updated state with gameReady: true
+    try {
+      await publishGameStateWithValues(newGameState);
+      showToast('Game started!', 'success');
+      console.log('Published game state with gameReady: true', newGameState);
+    } catch (error) {
+      console.error('Failed to publish game start state:', error);
+      showToast('Failed to start game', 'error');
+    }
+  }, [isRoomCreator, connectedPlayers, mySymbol, gameStateVersion, xWins, oWins, playerX, playerO, creatorPubkey, publishGameStateWithValues, showToast]);
 
   const makeMove = useCallback(async (index) => {
     if (!isMyTurn || board[index] || winner || isDraw || !gameReady) {
