@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,7 +10,7 @@ import FloatingActionMenu from '@/components/FloatingActionMenu';
 import { Profile } from '@/components/Profile';
 import { EnhancedFriendsSection } from '@/components/EnhancedFriendsSection';
 import { PlayersOnlineSection } from '@/components/PlayersOnlineSection';
-import { TicTacToe } from '@/games/TicTacToe';
+import TicTacToe from '@/games/TicTacToe';
 
 interface GameHubProps {
   onLogout: () => void;
@@ -82,7 +81,7 @@ export function GameHub({ onLogout, onNavigateToProfile }: GameHubProps) {
 
   // If we're in a game, render that game
   if (currentGame === 'tictactoe') {
-    return <TicTacToe pubkey={userPubkey} onBack={handleBackToGames} />;
+    return <TicTacToe onScoreUpdate={() => {}} onGameOver={() => {}} />;
   }
 
   const renderGames = () => (

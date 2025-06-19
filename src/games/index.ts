@@ -1,2 +1,1 @@
-
-export { TicTacToe } from './TicTacToe';
+export { default as TicTacToe } from './TicTacToe';
